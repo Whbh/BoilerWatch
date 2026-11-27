@@ -2,8 +2,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class CrimeLogScraper {
@@ -12,6 +15,11 @@ public class CrimeLogScraper {
         String mainUrl = "https://www.purdue.edu/ehps/police/statistics-policies/daily-crime-log-archives/111626-daily-crime-log.php";
         ArrayList <Elements> dates = new ArrayList <>();
         ArrayList <Element> datesLocation = new ArrayList <>();
+
+        //LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.of(2026, 11, 20);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+        String newDate = today.format(formatter);
 
         try {
             Document document = Jsoup.connect(mainUrl).get();
@@ -25,7 +33,7 @@ public class CrimeLogScraper {
             Element blockByDate = null;
             Elements theDate = null;
             for (int i = 0; i < dates.size(); i++) {
-                if (dates.get(i).text().contains("Friday, November 20, 2026")) {
+                if (dates.get(i).text().contains(newDate)) {
                     blockByDate = datesLocation.get(i);
                     theDate = dates.get(i);
                     break;
@@ -46,6 +54,10 @@ public class CrimeLogScraper {
                             " | " + cells.get(4).text());
                 }
             }
+
+            /*for (int i = 0; i < dates.size(); i++) {
+                System.out.println(dates.get(i).text());
+            }*/
 
         } catch (IOException e) {
             e.printStackTrace();
